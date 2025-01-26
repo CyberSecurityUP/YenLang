@@ -1,7 +1,3 @@
-Here is a concise **Documentation (Docs)** for **YenLang**:
-
----
-
 # YenLang Documentation
 
 ## Overview
@@ -134,12 +130,5 @@ YenLang is designed with offensive security in mind. It is **not** a general-pur
 
 - Malware prototyping.
 - Proof-of-concept development.
-- Payload generation.
-
-**Note:** Always use YenLang responsibly and within legal and ethical guidelines.
-
----
-
-For more details, explore the full documentation or reach out to the maintainer.
 
 Enjoy experimenting with **YenLang**!
