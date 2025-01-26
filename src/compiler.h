@@ -10,7 +10,7 @@ public:
     void compile(const ASTNode& ast);
 
 private:
-    std::map<std::string, std::string> variables; // Armazena variáveis e seus valores
+    std::map<std::string, std::string> variables; // Stores variables and their values
 
     void compileExpression(const ASTNode& node);
     void compilePrint(const ASTNode& node);
