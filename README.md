@@ -126,3 +126,5 @@ YenLang is developed with the goal of making programming accessible and fun. Spe
 For questions or feedback, feel free to open an issue
 
 Enjoy coding with YenLang!
+
+---
