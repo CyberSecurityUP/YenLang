@@ -6,8 +6,6 @@ Lexer::Lexer(const std::vector<std::string>& sourceLines)
     : sourceLines(sourceLines), currentLine(0), position(0) {
 }
 
-
-
 std::vector<Token> Lexer::tokenize() {
     std::vector<Token> tokens;
     while (currentLine < sourceLines.size()) {
@@ -32,7 +30,7 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back(readString(current));
             }
             else {
-                throw std::runtime_error("Caractere inesperado na linha " + std::to_string(currentLine + 1) + ": " + std::string(1, current));
+                throw std::runtime_error("Unexpected character on line " + std::to_string(currentLine + 1) + ": " + std::string(1, current));
             }
         }
         currentLine++;
@@ -72,7 +70,7 @@ Token Lexer::readIdentifier() {
     while (position < sourceLines[currentLine].length() && std::isalnum(peek())) {
         value += advance();
     }
-    // Verifica se é uma palavra-chave
+    // Check if it is a keyword
     if (value == "var" || value == "print" || value == "input" || value == "if" || value == "else") {
         return { KEYWORD, value, currentLine };
     }
@@ -83,7 +81,7 @@ Token Lexer::readOperator() {
     char current = advance();
     std::string op(1, current);
 
-    // Verifica se é um operador composto (==, !=, <=, >=)
+    // Check if it is a compound operator (==, !=, <=, >=)
     if (position < sourceLines[currentLine].length()) {
         char next = peek();
         if ((current == '=' && next == '=') || // ==
@@ -98,13 +96,11 @@ Token Lexer::readOperator() {
     return { OPERATOR, op, currentLine };
 }
 
-
-
 Token Lexer::readPunctuation() {
     char current = advance();
     std::string value(1, current);
 
-    // Verifica se é um operador composto (::)
+    // Check if it is a compound operator (::)
     if (current == ':' && peek() == ':') {
         value += advance();
     }
@@ -114,15 +110,15 @@ Token Lexer::readPunctuation() {
 
 Token Lexer::readString(char delimiter) {
     std::string value;
-    advance(); // Consome o delimitador inicial
+    advance(); // Consume the opening delimiter
     while (position < sourceLines[currentLine].length() && peek() != delimiter) {
         value += advance();
     }
     if (peek() == delimiter) {
-        advance(); // Consome o delimitador final
+        advance(); // Consume the closing delimiter
     }
     else {
-        throw std::runtime_error("String não fechada na linha " + std::to_string(currentLine + 1));
+        throw std::runtime_error("Unclosed string on line " + std::to_string(currentLine + 1));
     }
     return { STRING, value, currentLine };
 }
