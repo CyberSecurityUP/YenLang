@@ -36,11 +36,11 @@ ASTNode Parser::parseStatement() {
         }
     }
     else if (token.type == IDENTIFIER) {
-        // Declaração de variável ou atribuição
+        // Variable declaration or assignment
         return parseAssignment();
     }
     else if (token.type == PUNCTUATION && token.value == ";") {
-        // Ponto e vírgula (ignorar)
+        // Semicolon (ignore)
         advance();
         return { "EMPTY_STATEMENT", "", {}, token.line };
     }
@@ -51,24 +51,24 @@ ASTNode Parser::parseAssignment() {
     Token token = peek();
     ASTNode assignmentNode = { "ASSIGNMENT", "", {}, token.line };
 
-    // Lê o identificador (nome da variável)
+    // Read the identifier (variable name)
     assignmentNode.children.push_back({ "IDENTIFIER", token.value, {}, token.line });
     advance();
 
-    // Verifica se há um operador de atribuição (=)
+    // Check for an assignment operator (=)
     if (peek().value != "=") {
-        throw std::runtime_error("Esperado operador de atribuição '=' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected assignment operator '=' on line " + std::to_string(token.line));
     }
-    advance(); // Consome o operador de atribuição
+    advance(); // Consume the assignment operator
 
-    // Lê a expressão à direita do '='
+    // Read the expression to the right of '='
     assignmentNode.children.push_back(parseExpression());
 
-    // Verifica se há um ponto e vírgula no final
+    // Check for a semicolon at the end
     if (peek().value != ";") {
-        throw std::runtime_error("Esperado ';' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ';' on line " + std::to_string(token.line));
     }
-    advance(); // Consome o ponto e vírgula
+    advance(); // Consume the semicolon
 
     return assignmentNode;
 }
@@ -78,18 +78,18 @@ ASTNode Parser::parseExpression() {
     while (peek().type == OPERATOR && (peek().value == "+" || peek().value == "-" || peek().value == "=")) {
         std::string op = advance().value;
 
-        // Verifica se é uma concatenação de strings
+        // Check if it is a string concatenation
         if (op == "+" && (left.type == "STRING" || left.type == "IDENTIFIER")) {
             ASTNode right = parseTerm();
             if (right.type == "STRING" || right.type == "IDENTIFIER") {
                 left = { "STRING_CONCAT", op, {left, right}, peek().line };
             }
             else {
-                throw std::runtime_error("Operandos inválidos para concatenação de strings na linha " + std::to_string(peek().line));
+                throw std::runtime_error("Invalid operands for string concatenation on line " + std::to_string(peek().line));
             }
         }
         else {
-            // Caso contrário, trata como uma operação binária genérica
+            // Otherwise, treat as a generic binary operation
             ASTNode right = parseTerm();
             left = { "BINARY_OP", op, {left, right}, peek().line };
         }
@@ -121,44 +121,44 @@ ASTNode Parser::parseFactor() {
     else if (token.type == PUNCTUATION && token.value == "(") {
         ASTNode expr = parseExpression();
         if (advance().value != ")") {
-            throw std::runtime_error("Esperado ')' na linha " + std::to_string(token.line));
+            throw std::runtime_error("Expected ')' on line " + std::to_string(token.line));
         }
         return expr;
     }
     else {
-        throw std::runtime_error("Fator inesperado na linha " + std::to_string(token.line) + ": " + token.value);
+        throw std::runtime_error("Unexpected factor on line " + std::to_string(token.line) + ": " + token.value);
     }
 }
 
 ASTNode Parser::parsePrint() {
     Token token = peek();
     ASTNode printNode = { "PRINT", "", {}, token.line };
-    advance(); // Consumir 'print'
+    advance(); // Consume 'print'
     if (advance().value != "(") {
-        throw std::runtime_error("Esperado '(' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '(' on line " + std::to_string(token.line));
     }
-    printNode.children.push_back(parseExpression()); // Argumento
+    printNode.children.push_back(parseExpression()); // Argument
     if (peek().value != ")") {
-        throw std::runtime_error("Esperado ')' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ')' on line " + std::to_string(token.line));
     }
-    advance(); // Consumir ')'
+    advance(); // Consume ')'
     return printNode;
 }
 
 ASTNode Parser::parseInput() {
-    Token token = advance(); // Consumir 'input'
+    Token token = advance(); // Consume 'input'
     ASTNode inputNode = { "INPUT", "", {}, token.line };
     if (advance().value != "(") {
-        throw std::runtime_error("Esperado '(' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '(' on line " + std::to_string(token.line));
     }
 
-    // Verifica se há um argumento
+    // Check if there is an argument
     if (peek().type == STRING) {
-        inputNode.children.push_back(parseExpression()); // Lê o argumento
+        inputNode.children.push_back(parseExpression()); // Read the argument
     }
 
     if (advance().value != ")") {
-        throw std::runtime_error("Esperado ')' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ')' on line " + std::to_string(token.line));
     }
 
     return inputNode;
@@ -167,86 +167,87 @@ ASTNode Parser::parseInput() {
 ASTNode Parser::parseIf() {
     Token token = peek();
     ASTNode ifNode = { "IF", "", {}, token.line };
-    advance(); // Consumir 'if'
+    advance(); // Consume 'if'
 
-    // Verifica se há um '(' após o 'if'
+    // Check for '(' after 'if'
     if (advance().value != "(") {
-        throw std::runtime_error("Esperado '(' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '(' on line " + std::to_string(token.line));
     }
 
-    // Lê a condição do 'if'
+    // Read the condition of the 'if'
     ifNode.children.push_back(parseExpression());
 
-    // Verifica se há um ')' após a condição
+    // Check for ')' after the condition
     if (advance().value != ")") {
-        throw std::runtime_error("Esperado ')' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ')' on line " + std::to_string(token.line));
     }
 
-    // Verifica se há um '{' para o bloco verdadeiro
+    // Check for '{' for the true block
     if (advance().value != "{") {
-        throw std::runtime_error("Esperado '{' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '{' on line " + std::to_string(token.line));
     }
 
-    // Lê o bloco verdadeiro
+    // Read the true block
     ifNode.children.push_back(parseStatement());
 
-    // Verifica se há um '}' para fechar o bloco verdadeiro
+    // Check for '}' to close the true block
     if (advance().value != "}") {
-        throw std::runtime_error("Esperado '}' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '}' on line " + std::to_string(token.line));
     }
 
-    // Verifica se há um 'else'
+    // Check for 'else'
     if (peek().value == "else") {
-        advance(); // Consumir 'else'
+        advance(); // Consume 'else'
 
-        // Verifica se há um '{' para o bloco falso
+        // Check for '{' for the false block
         if (advance().value != "{") {
-            throw std::runtime_error("Esperado '{' na linha " + std::to_string(token.line));
+            throw std::runtime_error("Expected '{' on line " + std::to_string(token.line));
         }
 
-        // Lê o bloco falso
+        // Read the false block
         ifNode.children.push_back(parseStatement());
 
-        // Verifica se há um '}' para fechar o bloco falso
+        // Check for '}' to close the false block
         if (advance().value != "}") {
-            throw std::runtime_error("Esperado '}' na linha " + std::to_string(token.line));
+            throw std::runtime_error("Expected '}' on line " + std::to_string(token.line));
         }
     }
 
     return ifNode;
 }
+
 ASTNode Parser::parseVariableDeclaration() {
-    Token token = advance(); // Consumir 'var'
+    Token token = advance(); // Consume 'var'
     ASTNode varNode = { "VAR", "", {}, token.line };
 
-    // Lê o nome da variável
+    // Read the variable name
     if (peek().type != IDENTIFIER) {
-        throw std::runtime_error("Esperado identificador na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected identifier on line " + std::to_string(token.line));
     }
     varNode.children.push_back({ "IDENTIFIER", peek().value, {}, token.line });
     advance();
 
-    // Lê o tipo da variável
+    // Read the variable type
     if (advance().value != ":") {
-        throw std::runtime_error("Esperado ':' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ':' on line " + std::to_string(token.line));
     }
     if (peek().type != IDENTIFIER) {
-        throw std::runtime_error("Esperado tipo na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected type on line " + std::to_string(token.line));
     }
     varNode.children.push_back({ "TYPE", peek().value, {}, token.line });
     advance();
 
-    // Lê o valor da variável
+    // Read the variable value
     if (advance().value != "=") {
-        throw std::runtime_error("Esperado '=' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected '=' on line " + std::to_string(token.line));
     }
-    varNode.children.push_back(parseExpression()); // Valor
+    varNode.children.push_back(parseExpression()); // Value
 
-    // Verifica se há um ponto e vírgula no final
+    // Check for a semicolon at the end
     if (peek().value != ";") {
-        throw std::runtime_error("Esperado ';' na linha " + std::to_string(token.line));
+        throw std::runtime_error("Expected ';' on line " + std::to_string(token.line));
     }
-    advance(); // Consome o ponto e vírgula
+    advance(); // Consume the semicolon
 
     return varNode;
 }
