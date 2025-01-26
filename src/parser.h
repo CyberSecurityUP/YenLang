@@ -6,20 +6,21 @@
 #include "lexer.h"
 
 struct ASTNode {
-    std::string type;
-    std::string value;
-    std::vector<ASTNode> children;
-    size_t line; // Adicionado para rastrear a linha do nó
+    std::string type;                    
+    std::string value;                   
+    std::vector<ASTNode> children;       
+    size_t line;                         
 };
 
 class Parser {
 public:
     Parser(const std::vector<Token>& tokens);
+
     ASTNode parse();
 
 private:
-    std::vector<Token> tokens;
-    size_t position;
+    std::vector<Token> tokens;           
+    size_t position;                     
 
     Token peek();
     Token advance();
