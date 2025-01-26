@@ -6,10 +6,11 @@
 #include "parser.h"
 #include "compiler.h"
 
+// Function to read the contents of a file into a vector of strings
 std::vector<std::string> readFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        throw std::runtime_error("Erro ao abrir o arquivo: " + filename);
+        throw std::runtime_error("Error opening file: " + filename);
     }
     std::vector<std::string> lines;
     std::string line;
@@ -21,7 +22,7 @@ std::vector<std::string> readFile(const std::string& filename) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Uso: " << argv[0] << " <arquivo.yen>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <file.yen>" << std::endl;
         return 1;
     }
 
@@ -41,10 +42,10 @@ int main(int argc, char* argv[]) {
         Compiler compiler;
         compiler.compile(ast);
 
-        std::cout << "Compilação concluída com sucesso!" << std::endl;
+        std::cout << "Build completed successfully!" << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << "Erro: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
