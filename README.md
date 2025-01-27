@@ -1,6 +1,6 @@
 # YenLang
 
-YenLang is a statically-typed programming language built on C++, designed specifically for malware development, security research, and related fields. 
+Yen Language is a statically-typed programming language built on C++, designed specifically for malware development, security research, and related fields. 
 
 With its simple syntax and powerful features, YenLang aims to provide researchers and developers with an accessible yet robust toolset for creating and testing proof-of-concepts, payloads, and other offensive security utilities. 
 
